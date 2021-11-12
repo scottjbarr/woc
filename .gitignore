@@ -1,0 +1,10 @@
+tmp
+\#*
+.\#*
+vendor
+.DS_Store
+dist
+build
+tmp
+conf
+var
