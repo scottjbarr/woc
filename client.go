@@ -155,7 +155,7 @@ func (w *Client) get(path string, out interface{}) error {
 }
 
 func (w *Client) post(path string, postBody, out interface{}) error {
-	fmt.Printf("path = %s\n", path)
+	// fmt.Printf("path = %s\n", path)
 
 	payload, err := NewJSONReader(postBody)
 	if err != nil {
@@ -175,7 +175,7 @@ func (w *Client) post(path string, postBody, out interface{}) error {
 		return err
 	}
 
-	fmt.Printf("body = %s\n", body)
+	// fmt.Printf("body = %s\n", body)
 
 	if out != nil {
 		if err := json.Unmarshal(body, out); err != nil {
