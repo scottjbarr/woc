@@ -20,6 +20,13 @@ const (
 
 	PathBulkTXs = "/v1/bsv/%s/txs"
 
+	// PathChainInfo is that path that returns information about the chain in general.
+	//
+	// GET https://api.whatsonchain.com/v1/bsv/<network>/chain/info
+	PathChainInfo = "/v1/bsv/%s/chain/info"
+
+	PathGetByHeight = "/v1/bsv/%s/block/height/%v"
+
 	NetworkMain = "main"
 )
 
@@ -93,6 +100,32 @@ func (w *Client) HistoryForAddress(address string) ([]HistoryTX, error) {
 	return txs, nil
 }
 
+func (w *Client) LatestBlockInfo(ctx context.Context) (*BlockInfo, error) {
+	path := fmt.Sprintf(PathChainInfo, w.Network)
+
+	out := BlockInfo{}
+
+	if err := w.get(path, &out); err != nil {
+		return nil, err
+	}
+
+	return &out, nil
+}
+
+func (w *Client) GetByHeight(ctx context.Context, height int64) (*BlockDetail, error) {
+	// GET https://api.whatsonchain.com/v1/bsv/<network>/block/height/<height>
+	path := fmt.Sprintf(PathGetByHeight, w.Network, height)
+
+	out := BlockDetail{}
+
+	if err := w.get(path, &out); err != nil {
+		return nil, err
+	}
+
+	return &out, nil
+
+}
+
 func (w *Client) Broadcast(ctx context.Context, b []byte) error {
 	s := fmt.Sprintf("%x", b)
 
@@ -122,11 +155,14 @@ func (w *Client) get(path string, out interface{}) error {
 }
 
 func (w *Client) post(path string, postBody, out interface{}) error {
+	fmt.Printf("path = %s\n", path)
+
 	payload, err := NewJSONReader(postBody)
 	if err != nil {
 		return err
 	}
 
+	// fmt.Printf("payload = %s\n", payload)
 	res, err := w.Client.Post(w.buildURL(path), ContentTypeApplicationJSON, payload)
 	if err != nil {
 		return err
@@ -139,7 +175,7 @@ func (w *Client) post(path string, postBody, out interface{}) error {
 		return err
 	}
 
-	// fmt.Printf("body = %s\n", body)
+	fmt.Printf("body = %s\n", body)
 
 	if out != nil {
 		if err := json.Unmarshal(body, out); err != nil {

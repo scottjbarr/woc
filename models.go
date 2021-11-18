@@ -18,14 +18,16 @@ type TXDetail struct {
 }
 
 type Vin struct {
-	Coinbase  string `json:"coinbase"`
-	ScriptSig struct {
-		Asm string `json:"asm"`
-		Hex string `json:"hex"`
-	} `json:"scriptSig"`
-	Sequence int64  `json:"sequence"`
-	Txid     string `json:"txid"`
-	Vout     int64  `json:"vout"`
+	Coinbase  string    `json:"coinbase"`
+	ScriptSig ScriptSig `json:"scriptSig"`
+	Sequence  int64     `json:"sequence"`
+	Txid      string    `json:"txid"`
+	Vout      int64     `json:"vout"`
+}
+
+type ScriptSig struct {
+	Asm string `json:"asm"`
+	Hex string `json:"hex"`
 }
 
 type Float64 float64
@@ -61,4 +63,55 @@ type HistoryTX struct {
 
 type BroadcastRequest struct {
 	TXHex string `json:"txhex"`
+}
+
+type BlockInfo struct {
+	BestBlockHash        string  `json:"bestblockhash"`
+	Blocks               int64   `json:"blocks"`
+	Chain                string  `json:"chain"`
+	Chainwork            string  `json:"chainwork"`
+	Difficulty           float64 `json:"difficulty"`
+	Headers              int64   `json:"headers"`
+	MedianTime           int64   `json:"mediantime"`
+	Pruned               bool    `json:"pruned"`
+	VerificationProgress float64 `json:"verificationprogress"`
+}
+
+type BlockDetail struct {
+	Hash              string      `json:"hash"`
+	Confirmations     int         `json:"confirmations"`
+	Size              int         `json:"size"`
+	Height            int         `json:"height"`
+	Version           int         `json:"version"`
+	VersionHex        string      `json:"versionHex"`
+	Merkleroot        string      `json:"merkleroot"`
+	Txcount           int         `json:"txcount"`
+	Tx                []string    `json:"tx"`
+	Time              int         `json:"time"`
+	Mediantime        int         `json:"mediantime"`
+	Nonce             int64       `json:"nonce"`
+	Bits              string      `json:"bits"`
+	Difficulty        float64     `json:"difficulty"`
+	Chainwork         string      `json:"chainwork"`
+	Previousblockhash string      `json:"previousblockhash"`
+	Nextblockhash     string      `json:"nextblockhash"`
+	CoinbaseTx        CoinbaseTX  `json:"coinbaseTx"`
+	TotalFees         float64     `json:"totalFees"`
+	Miner             string      `json:"miner"`
+	Pages             interface{} `json:"pages"`
+}
+
+type CoinbaseTX struct {
+	Hex           string `json:"hex"`
+	Txid          string `json:"txid"`
+	Hash          string `json:"hash"`
+	Size          int    `json:"size"`
+	Version       int    `json:"version"`
+	Locktime      int    `json:"locktime"`
+	Vin           []Vin  `json:"vin"`
+	Vout          []Vout `json:"vout"`
+	Blockhash     string `json:"blockhash"`
+	Confirmations int    `json:"confirmations"`
+	Time          int    `json:"time"`
+	Blocktime     int    `json:"blocktime"`
 }
