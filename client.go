@@ -15,7 +15,8 @@ const (
 
 	PathHistoryForAddress = "/v1/bsv/%s/address/%s/history"
 
-	PathBroadcast = "/v1/bsv/%s/broadcast"
+	// PathBroadcast is the path to POST tx messages to.
+	PathBroadcast = "/v1/bsv/%s/tx/raw"
 
 	PathBulkTXs = "/v1/bsv/%s/txs"
 
@@ -92,8 +93,8 @@ func (w *Client) HistoryForAddress(address string) ([]HistoryTX, error) {
 	return txs, nil
 }
 
-func (w *Client) Broadcast(tx []byte) error {
-	s := fmt.Sprintf("%x", tx)
+func (w *Client) Broadcast(ctx context.Context, b []byte) error {
+	s := fmt.Sprintf("%x", b)
 
 	req := BroadcastRequest{
 		TXHex: s,
