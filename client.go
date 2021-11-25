@@ -27,7 +27,15 @@ const (
 
 	PathGetByHeight = "/v1/bsv/%s/block/height/%v"
 
+	// NetworkMain indicates that the client should use the "main" network. This is the default.
 	NetworkMain = "main"
+
+	// NetworkTest indicates that the client should use the "test" network.
+	NetworkTest = "test"
+
+	// NetworkSTN indicates that the client should use the "stn" network.
+	NetworkSTN = "stn"
+
 	// PathTXByHash is the path to get a TX by hash.
 	//
 	// e.g. GET /v1/bsv/main/tx/hash/c1d32f28baa27a376ba977f6a8de6ce0a87041157cef0274b20bfda2b0d8df96
