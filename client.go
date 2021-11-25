@@ -28,6 +28,10 @@ const (
 	PathGetByHeight = "/v1/bsv/%s/block/height/%v"
 
 	NetworkMain = "main"
+	// PathTXByHash is the path to get a TX by hash.
+	//
+	// e.g. GET /v1/bsv/main/tx/hash/c1d32f28baa27a376ba977f6a8de6ce0a87041157cef0274b20bfda2b0d8df96
+	PathTXByHash = "/v1/bsv/%s/tx/hash/%s"
 )
 
 type TXQuery struct {
@@ -137,6 +141,18 @@ func (w *Client) Broadcast(ctx context.Context, b []byte) error {
 	path := fmt.Sprintf(PathBroadcast, w.Network)
 
 	return w.post(path, req, nil)
+}
+
+func (w *Client) GetTXByHash(ctx context.Context, hash string) (*TXDetail, error) {
+	path := fmt.Sprintf(PathTXByHash, w.Network, hash)
+
+	tx := TXDetail{}
+
+	if err := w.get(path, &tx); err != nil {
+		return nil, err
+	}
+
+	return &tx, nil
 }
 
 func (w *Client) get(path string, out interface{}) error {
