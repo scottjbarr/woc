@@ -169,18 +169,25 @@ func (w *Client) get(path string, out interface{}) error {
 		return err
 	}
 
-	if res.StatusCode != http.StatusOK {
-		return fmt.Errorf("HTTP %v %s", res.StatusCode, http.StatusText(res.StatusCode))
-	}
-
 	defer res.Body.Close()
 
-	return json.NewDecoder(res.Body).Decode(out)
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return err
+	}
+
+	if res.StatusCode >= 300 || res.StatusCode < 200 {
+		return fmt.Errorf("statuscode=%v : message=%s", res.StatusCode, body)
+	}
+
+	if err := json.Unmarshal(body, out); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (w *Client) post(path string, postBody, out interface{}) error {
-	// fmt.Printf("path = %s\n", path)
-
 	payload, err := NewJSONReader(postBody)
 	if err != nil {
 		return err
@@ -200,6 +207,10 @@ func (w *Client) post(path string, postBody, out interface{}) error {
 	}
 
 	// fmt.Printf("body = %s\n", body)
+
+	if res.StatusCode >= 300 || res.StatusCode < 200 {
+		return fmt.Errorf("statuscode=%v : message=%s", res.StatusCode, body)
+	}
 
 	if out != nil {
 		if err := json.Unmarshal(body, out); err != nil {
