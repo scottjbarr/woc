@@ -1,7 +1,6 @@
 package woc
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -62,7 +61,7 @@ func New() *Client {
 	}
 }
 
-func (w *Client) BulkTXs(ctx context.Context, hashes []string) ([]TXDetail, error) {
+func (w *Client) BulkTXs(hashes []string) ([]TXDetail, error) {
 	if len(hashes) > 20 {
 		// split the hashes into chunks of 20
 		chunks := ChunkSlice(hashes, 20)
@@ -71,7 +70,7 @@ func (w *Client) BulkTXs(ctx context.Context, hashes []string) ([]TXDetail, erro
 		txs := []TXDetail{}
 
 		for _, set := range chunks {
-			res, err := w.BulkTXs(ctx, set)
+			res, err := w.BulkTXs(set)
 			if err != nil {
 				return nil, err
 			}
@@ -112,7 +111,7 @@ func (w *Client) HistoryForAddress(address string) ([]HistoryTX, error) {
 	return txs, nil
 }
 
-func (w *Client) LatestBlockInfo(ctx context.Context) (*BlockInfo, error) {
+func (w *Client) LatestBlockInfo() (*BlockInfo, error) {
 	path := fmt.Sprintf(PathChainInfo, w.Network)
 
 	out := BlockInfo{}
@@ -124,7 +123,7 @@ func (w *Client) LatestBlockInfo(ctx context.Context) (*BlockInfo, error) {
 	return &out, nil
 }
 
-func (w *Client) GetByHeight(ctx context.Context, height int64) (*BlockDetail, error) {
+func (w *Client) GetByHeight(height int64) (*BlockDetail, error) {
 	// GET https://api.whatsonchain.com/v1/bsv/<network>/block/height/<height>
 	path := fmt.Sprintf(PathGetByHeight, w.Network, height)
 
@@ -138,7 +137,7 @@ func (w *Client) GetByHeight(ctx context.Context, height int64) (*BlockDetail, e
 
 }
 
-func (w *Client) Broadcast(ctx context.Context, b []byte) error {
+func (w *Client) Broadcast(b []byte) error {
 	s := fmt.Sprintf("%x", b)
 
 	req := BroadcastRequest{
@@ -151,7 +150,7 @@ func (w *Client) Broadcast(ctx context.Context, b []byte) error {
 	return w.post(path, req, nil)
 }
 
-func (w *Client) GetTXByHash(ctx context.Context, hash string) (*TXDetail, error) {
+func (w *Client) GetTXByHash(hash string) (*TXDetail, error) {
 	path := fmt.Sprintf(PathTXByHash, w.Network, hash)
 
 	tx := TXDetail{}

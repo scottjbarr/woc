@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"encoding/hex"
 	"errors"
 	"fmt"
@@ -19,14 +18,12 @@ func main() {
 
 	cmd := os.Args[1]
 
-	ctx := context.Background()
-
-	if err := execute(ctx, cmd, os.Args[2:]); err != nil {
+	if err := execute(cmd, os.Args[2:]); err != nil {
 		panic(err)
 	}
 }
 
-func execute(ctx context.Context, cmd string, args []string) error {
+func execute(cmd string, args []string) error {
 	c := woc.New()
 
 	// fmt.Printf("args = %+v\n", args)
@@ -39,7 +36,7 @@ func execute(ctx context.Context, cmd string, args []string) error {
 
 		hashes := strings.Split(args[0], ",")
 
-		return bulkTXs(ctx, c, hashes)
+		return bulkTXs(c, hashes)
 
 	case "broadcast":
 		if len(args) == 0 {
@@ -48,14 +45,14 @@ func execute(ctx context.Context, cmd string, args []string) error {
 
 		data := args[0]
 
-		return broadcast(ctx, c, data)
+		return broadcast(c, data)
 	}
 
 	return errors.New("Unknown command")
 }
 
-func bulkTXs(ctx context.Context, c *woc.Client, hashes []string) error {
-	txs, err := c.BulkTXs(ctx, hashes)
+func bulkTXs(c *woc.Client, hashes []string) error {
+	txs, err := c.BulkTXs(hashes)
 	if err != nil {
 		return err
 	}
@@ -67,13 +64,13 @@ func bulkTXs(ctx context.Context, c *woc.Client, hashes []string) error {
 	return nil
 }
 
-func broadcast(ctx context.Context, c *woc.Client, data string) error {
+func broadcast(c *woc.Client, data string) error {
 	b, err := hex.DecodeString(data)
 	if err != nil {
 		return err
 	}
 
-	if err := c.Broadcast(ctx, b); err != nil {
+	if err := c.Broadcast(b); err != nil {
 		return err
 	}
 
