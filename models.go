@@ -17,6 +17,19 @@ type TXDetail struct {
 	Vout          []Vout `json:"vout"`
 }
 
+type TXRawQuery struct {
+	Hashes []string `json:"txids"`
+}
+
+type TXRaw struct {
+	Blockhash     string `json:"blockhash"`
+	Blockheight   int64  `json:"blockheight"`
+	Blocktime     int64  `json:"blocktime"`
+	Confirmations int64  `json:"confirmations"`
+	Txid          string `json:"txid"`
+	Hex           string `json:"hex"`
+}
+
 type Vin struct {
 	Coinbase  string    `json:"coinbase"`
 	ScriptSig ScriptSig `json:"scriptSig"`

@@ -29,6 +29,15 @@ func execute(cmd string, args []string) error {
 	// fmt.Printf("args = %+v\n", args)
 
 	switch cmd {
+	case "rawtxs":
+		if len(args) == 0 {
+			return errors.New("Usage: woc-client rawtxs hash,hash,hash,...")
+		}
+
+		hashes := strings.Split(args[0], ",")
+
+		return rawTXs(c, hashes)
+
 	case "bulktxs":
 		if len(args) == 0 {
 			return errors.New("Usage: woc-client bulktxs hash,hash,hash,...")
@@ -72,6 +81,19 @@ func broadcast(c *woc.Client, data string) error {
 
 	if err := c.Broadcast(b); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func rawTXs(c *woc.Client, hashes []string) error {
+	resp, err := c.RawTXs(hashes)
+	if err != nil {
+		return err
+	}
+
+	for _, tx := range resp {
+		fmt.Printf("%s\n", tx.Hex)
 	}
 
 	return nil

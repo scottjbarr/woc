@@ -19,6 +19,8 @@ const (
 
 	PathBulkTXs = "/v1/bsv/%s/txs"
 
+	PathRawTX = "/v1/bsv/%s/txs/hex"
+
 	// PathChainInfo is that path that returns information about the chain in general.
 	//
 	// GET https://api.whatsonchain.com/v1/bsv/<network>/chain/info
@@ -59,6 +61,24 @@ func New() *Client {
 		Client:  newDefaultHTTPClient(),
 		TXCache: map[string]string{},
 	}
+}
+
+func (w *Client) RawTXs(hashes []string) ([]TXRaw, error) {
+	path := fmt.Sprintf(PathRawTX, w.Network)
+
+	txs := []TXRaw{}
+
+	// {"txids" : ["294cd1ebd5689fdee03509f92c32184c0f52f037d4046af250229b97e0c8f1aa","91f68c2c598bc73812dd32d60ab67005eac498bef5f0c45b822b3c9468ba3258"]}"
+
+	q := TXRawQuery{
+		Hashes: hashes,
+	}
+
+	if err := w.post(path, q, &txs); err != nil {
+		return nil, err
+	}
+
+	return txs, nil
 }
 
 func (w *Client) BulkTXs(hashes []string) ([]TXDetail, error) {
